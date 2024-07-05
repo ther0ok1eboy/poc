@@ -5,5 +5,7 @@
 - python3 XXX-POC.py -u "http(s)://ip:port"
 - python3 XXX-POC.py -l "hosts.txt"
 
+# Result
+
 ## TODO
 持续更新中：-D
